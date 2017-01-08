@@ -5,10 +5,12 @@
 	<groupId>com.github.funthomas424242</groupId>
 	<artifactId>familienbuch</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>eclipse-repository</packaging>
 
 
 	<properties>
+		<!-- tycho build -->
+		<tycho.version>0.26.0</tycho.version>
 		<!-- Control of deployment and publishing to bintray -->
 		<groupId>${project.groupId}</groupId>
 		<artifactId>${project.artifactId}</artifactId>
@@ -48,7 +50,12 @@
 
 	<repositories>
 		<repository>
-			<id>neon</id>
+			<id>eclipse-neon</id>
+			<url>http://download.eclipse.org/releases/neon</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>orbit-neon</id>
 			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository</url>
 			<layout>p2</layout>
 		</repository>
@@ -132,6 +139,73 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<includeAllDependencies>true</includeAllDependencies>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-director-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<executions>
+					<execution>
+						<id>materialize-products</id>
+						<goals>
+							<goal>materialize-products</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>archive-products</id>
+						<goals>
+							<goal>archive-products</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<executions>
@@ -155,29 +229,26 @@
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
 				<configuration> <useDefaultManifestFile>true</useDefaultManifestFile> </configuration> 
 				</plugin> -->
-			<plugin>
+<!-- 			<plugin>
 				<groupId>org.reficio</groupId>
 				<artifactId>p2-maven-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>generate-p2-site</id>
-						<phase>package</phase>
+						<phase>compile</phase>
 						<goals>
 							<goal>site</goal>
 						</goals>
 						<configuration>
 							<artifacts>
-								<!-- specify your depencies here -->
-								<!-- groupId:artifactId:version -->
-								<!-- <artifact><id>com.github.funthomas424242:familienbuch:${project.version}</id></artifact> -->
+								specify your depencies here
+								groupId:artifactId:version
+								<artifact><id>com.github.funthomas424242:familienbuch:${project.version}</id></artifact>
 							</artifacts>
 							<p2>
-								<!-- <artifact>
-									<id>org.junit:4.11.0.v201303080030</id>
-								</artifact> -->
-								<!-- <artifact>
-									<id>com.github.funthomas424242:familienbuch:${project.version}</id>
-								</artifact> -->
+								<artifact> <id>org.junit:4.11.0.v201303080030</id> </artifact>
+								<artifact> <id>com.github.funthomas424242:familienbuch:${project.version}</id> 
+									</artifact>
 								<artifact>
 									<id>com.ibm.icu:56.1.0.v201601250100</id>
 								</artifact>
@@ -190,257 +261,74 @@
 								<artifact>
 									<id>javax.xml:1.3.4.v201005080400</id>
 								</artifact>
-<!--
-								<artifact>
-									<id>org.apache.batik.css</id>
-								</artifact>
-								<artifact>
-									<id>org.apache.batik.util</id>
-								</artifact>
-								<artifact>
-									<id>org.apache.batik.util.gui</id>
-								</artifact>
-								<artifact>
-									<id>org.apache.commons.jxpath</id>
-								</artifact>
-								<artifact>
-									<id>org.apache.commons.logging</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.commands</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.contenttype</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.databinding</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.databinding.beans</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.databinding.observable</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.databinding.property</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.expressions</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.aix.ppc" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.hpux.ia64_32" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.linux.ppc" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.linux.x86" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.linux.x86_64" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.macosx" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.solaris.sparc" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.win32.x86" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.filesystem.win32.x86_64" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.jobs</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.resources</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.resources.win32.x86" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.core.runtime</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.core.commands</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.core.contexts</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.core.di</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.core.di.annotations</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.core.di.extensions</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.core.services</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.emf.xpath</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.bindings</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.css.core</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.css.swt</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.css.swt.theme</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.di</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.model.workbench</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.services</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.swt.gtk" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.widgets</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.workbench</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.workbench.renderers.swt</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.workbench.renderers.swt.cocoa"
-										fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.workbench.swt</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.e4.ui.workbench3</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.emf.common</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.emf.databinding</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.emf.ecore</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.emf.ecore.change</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.emf.ecore.xmi</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.app</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.common</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.concurrent</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.ds</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.event</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.preferences</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.registry</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.equinox.util</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.jface</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.jface.databinding</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.osgi</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.osgi.compatibility.state" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.osgi.services</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.cocoa.macosx.x86_64" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.linux.ppc" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.linux.ppc64" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.linux.s390" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.linux.s390x" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.linux.x86" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.linux.x86_64" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.solaris.sparc" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.gtk.solaris.x86" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.win32.win32.x86" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.eclipse.swt.win32.win32.x86_64" fragment="true</id>
-								</artifact>
-								<artifact>
-									<id>org.w3c.css.sac</id>
-								</artifact>
-								<artifact>
-									<id>org.w3c.dom.events</id>
-								</artifact>
-								<artifact>
-									<id>org.w3c.dom.smil</id>
-								</artifact>
-								<artifact>
-									<id>org.w3c.dom.svg</id>
-								</artifact>
--->
+								<artifact> <id>org.apache.batik.css</id> </artifact> <artifact> 
+									<id>org.apache.batik.util</id> </artifact> <artifact> <id>org.apache.batik.util.gui</id> 
+									</artifact> <artifact> <id>org.apache.commons.jxpath</id> </artifact> <artifact> 
+									<id>org.apache.commons.logging</id> </artifact> <artifact> <id>org.eclipse.core.commands</id> 
+									</artifact> <artifact> <id>org.eclipse.core.contenttype</id> </artifact> 
+									<artifact> <id>org.eclipse.core.databinding</id> </artifact> <artifact> <id>org.eclipse.core.databinding.beans</id> 
+									</artifact> <artifact> <id>org.eclipse.core.databinding.observable</id> </artifact> 
+									<artifact> <id>org.eclipse.core.databinding.property</id> </artifact> <artifact> 
+									<id>org.eclipse.core.expressions</id> </artifact> <artifact> <id>org.eclipse.core.filesystem</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.aix.ppc" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.hpux.ia64_32" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.linux.ppc" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.linux.x86" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.linux.x86_64" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.macosx" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.solaris.sparc" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.win32.x86" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.filesystem.win32.x86_64" fragment="true</id> 
+									</artifact> <artifact> <id>org.eclipse.core.jobs</id> </artifact> <artifact> 
+									<id>org.eclipse.core.resources</id> </artifact> <artifact> <id>org.eclipse.core.resources.win32.x86" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.core.runtime</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.core.commands</id> </artifact> 
+									<artifact> <id>org.eclipse.e4.core.contexts</id> </artifact> <artifact> <id>org.eclipse.e4.core.di</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.core.di.annotations</id> </artifact> 
+									<artifact> <id>org.eclipse.e4.core.di.extensions</id> </artifact> <artifact> 
+									<id>org.eclipse.e4.core.services</id> </artifact> <artifact> <id>org.eclipse.e4.emf.xpath</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.ui.bindings</id> </artifact> <artifact> 
+									<id>org.eclipse.e4.ui.css.core</id> </artifact> <artifact> <id>org.eclipse.e4.ui.css.swt</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.ui.css.swt.theme</id> </artifact> 
+									<artifact> <id>org.eclipse.e4.ui.di</id> </artifact> <artifact> <id>org.eclipse.e4.ui.model.workbench</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.ui.services</id> </artifact> <artifact> 
+									<id>org.eclipse.e4.ui.swt.gtk" fragment="true</id> </artifact> <artifact> 
+									<id>org.eclipse.e4.ui.widgets</id> </artifact> <artifact> <id>org.eclipse.e4.ui.workbench</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.ui.workbench.renderers.swt</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.ui.workbench.renderers.swt.cocoa" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.e4.ui.workbench.swt</id> 
+									</artifact> <artifact> <id>org.eclipse.e4.ui.workbench3</id> </artifact> 
+									<artifact> <id>org.eclipse.emf.common</id> </artifact> <artifact> <id>org.eclipse.emf.databinding</id> 
+									</artifact> <artifact> <id>org.eclipse.emf.ecore</id> </artifact> <artifact> 
+									<id>org.eclipse.emf.ecore.change</id> </artifact> <artifact> <id>org.eclipse.emf.ecore.xmi</id> 
+									</artifact> <artifact> <id>org.eclipse.equinox.app</id> </artifact> <artifact> 
+									<id>org.eclipse.equinox.common</id> </artifact> <artifact> <id>org.eclipse.equinox.concurrent</id> 
+									</artifact> <artifact> <id>org.eclipse.equinox.ds</id> </artifact> <artifact> 
+									<id>org.eclipse.equinox.event</id> </artifact> <artifact> <id>org.eclipse.equinox.preferences</id> 
+									</artifact> <artifact> <id>org.eclipse.equinox.registry</id> </artifact> 
+									<artifact> <id>org.eclipse.equinox.util</id> </artifact> <artifact> <id>org.eclipse.jface</id> 
+									</artifact> <artifact> <id>org.eclipse.jface.databinding</id> </artifact> 
+									<artifact> <id>org.eclipse.osgi</id> </artifact> <artifact> <id>org.eclipse.osgi.compatibility.state" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.osgi.services</id> 
+									</artifact> <artifact> <id>org.eclipse.swt</id> </artifact> <artifact> <id>org.eclipse.swt.cocoa.macosx.x86_64" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.linux.ppc" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.linux.ppc64" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.linux.s390" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.linux.s390x" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.linux.x86" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.linux.x86_64" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.solaris.sparc" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.gtk.solaris.x86" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.win32.win32.x86" 
+									fragment="true</id> </artifact> <artifact> <id>org.eclipse.swt.win32.win32.x86_64" 
+									fragment="true</id> </artifact> <artifact> <id>org.w3c.css.sac</id> </artifact> 
+									<artifact> <id>org.w3c.dom.events</id> </artifact> <artifact> <id>org.w3c.dom.smil</id> 
+									</artifact> <artifact> <id>org.w3c.dom.svg</id> </artifact>
 							</p2>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<!-- NOTE: We don't need a groupId specification because the group is 
 					org.apache.maven.plugins ...which is assumed by default. -->
